@@ -114,18 +114,16 @@ for i=1:1:num_markers
 end
 
 
-%%
-
 %% Cut gait cycles by using the ankle position
-mid_stance = zeros(length(data.RANK(:, 3)), 1);
-norm_ank_r = normal(data.RANK(:, 3)) ;
-norm_ank_l = normal(data.LANK(:, 3));
+mid_stance = zeros(length(data_markers.RANK(:, 3)), 1);
+norm_ank_r = normal(data_markers.RANK(:, 3)) ;
+norm_ank_l = normal(data_markers.LANK(:, 3));
 ind_list = [];
 ind_list(1) = 0;
 val_list = [];
-for  i=2:length(t2)
-    if (abs(norm_ank_r(i) - norm_ank_l(i)) < 0.5)
-        if ((i - ind_list(end))>30)
+for  i=2:length(t_Markers)
+    if (abs(norm_ank_r(i) - norm_ank_l(i)) < 1)
+        if ((i - ind_list(end))>15)
             mid_stance(i) = 1;
             ind_list = vertcat(ind_list, i);
             val_list = vertcat(val_list, norm_ank_r(i));
@@ -159,7 +157,7 @@ function [z, rmsv] = lin_env(data, fco, fs, ts)
 end
 
 function out = normal(data)
-    out = lowpass(data-mean(data), 1, 100);
+    out = lowpass(data-mean(data), 10, 100);
 
 end
 
