@@ -13,6 +13,9 @@ GROUP_NAME = 'G'; % your dataset number
 DATASET1 = ['DM002_TDM_08_1kmh.mat'];
 DATASET2 = ['DM002_TDM_08_2kmh.mat'];
 DATASET3 = ['DM002_TDM_1kmh_NoEES.mat'];
+DATASET4 = ['AML_01_1.mat'];
+DATASET4 = ['AML_01_1.mat'];
+DATASET4 = ['AML_01_1.mat'];
 
 load(DATASET1); % choose which datastructure to load
 Results = [];
@@ -32,7 +35,7 @@ figure
 for i=1:8
     plot_ind = 420+i;
     subplot(plot_ind)
-    [linenv, RMS] = lin_env(data.(names{i}), 5, 499, 50, 1000, 88);
+    [linenv, RMS] = lin_env(data.(names{i}),10, 1000, 88);
     Results.EMG.linenv(:,i) = linenv;
     Results.EMG.RMS(:,i) = RMS;
     plot(times(35000:39000), data.(names{i})((35000:39000)));
@@ -40,7 +43,7 @@ for i=1:8
     plot(times(35000:39000), Results.EMG.linenv((35000:39000),i), 'color', 'k');
     hold on
     plot(times(35000:39000), Results.EMG.RMS((35000:39000),i), 'color', 'red');
-    legend(names{i})
+    legend(names{i}, 'Butterworth Low', 'RMS')
 end
 
 
@@ -127,16 +130,15 @@ hold on
 plot(norm_ank_l )
 
 
-function [z, rmsv] = lin_env(data, fb1, fb2, fco, fs, ts)
+function [z, rmsv] = lin_env(data, fco, fs, ts)
     fnyq = fs/2;
-    x = bandpass(data, [fb1 fb2],fs );
-    x = bandstop(x, [48 52], fs);
-    %x = data;
-    %y=abs(x-mean(x));
-    y=abs(x);
-    [b,a]=butter(2,fco*1.25/fnyq);
+    % x = bandpass(data, [fb1 fb2],fs ); not needed as data is already
+    % bandpass
+    x = data;
+    y =abs(x-mean(x));
+    [b,a]=butter(4,fco*1.25/fnyq);
     z=filtfilt(b,a,y)*5;
-    rmsv = sqrt(movmean(x.^2, ts))*5;   
+    rmsv = sqrt(movmean(y.^2, ts))*5;   
 
 end
 
