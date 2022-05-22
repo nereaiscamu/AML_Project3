@@ -10,106 +10,120 @@ LAST_NAME3 = 'Carbonell'; % Last name 3
 GROUP_NAME = 'G'; % your dataset number
 
 % Settings
-DATASET1 = ['DM002_TDM_08_1kmh.mat'];
-DATASET2 = ['DM002_TDM_08_2kmh.mat'];
-DATASET3 = ['DM002_TDM_1kmh_NoEES.mat'];
-DATASET4 = ['AML_01_1.mat'];
-DATASET4 = ['AML_01_1.mat'];
-DATASET4 = ['AML_01_1.mat'];
+DATASET1 = ['DM002_TDM_1kmh_NoEES.mat'];
+DATASET2 = ['DM002_TDM_08_1kmh.mat'];
+DATASET3 = ['DM002_TDM_08_2kmh.mat'];
+DATASET4 = ['AML_02_1.mat'];
+DATASET5 = ['AML_02_2.mat'];
+DATASET6 = ['AML_02_3.mat'];
 
-load(DATASET1); % choose which datastructure to load
+load(DATASET4); % choose which datastructure to load
 Results = [];
 
 %%  ------------- (1) ASSIGNEMENT 1: DETECT GAIT EVENTS ----------------------
-
-times = [];
-for i = 1 : length(data.CBack)
-    times(i) = i* 1/data.EMG_sr ;
+dataset = 4;
+if dataset <4
+    N_EMG = length(data.LSol);
+    SR_ENG = data.EMG_sr ;
+    N_Markers = length(data.LHIP);
+    SR_Markers = data.marker_sr;
+    if dataset <2
+        data_EMG = data(1:14);
+        data_markers = data(17:24);
+    else 
+    data_EMG = data(1:16);
+    data_markers = data(19:26);
+    end 
+else 
+    N_EMG = length(EMG.LSol);
+    SR_ENG = Info.EMGfq ;
+    data_EMG = EMG;
+    data_markers = Markers;
+    N_Markers = length(Markers.LHIP);
+    SR_Markers = Info.Kinfq;
+end 
+   
+t_EMG = [];
+for i = 1 : N_EMG
+    t_EMG(i) = i* 1/SR_ENG;
 end 
 
+
+t_Markers = [];
+for i = 1 :N_Markers
+    t_Markers(i) = i* 1/SR_Markers ;
+end 
 %% PLOT EMG FILTERED SIGNAL (RMS) 
 % (it reflects the physiological activity during contraction)
-names = fieldnames(data);
-figure
 
-for i=1:8
-    plot_ind = 420+i;
-    subplot(plot_ind)
-    [linenv, RMS] = lin_env(data.(names{i}),10, 1000, 88);
+
+EMG_names = fieldnames(data_EMG);
+figure
+num_muscles = length(EMG_names);
+
+L=ceil(num_muscles^.5);
+for i=1:1:num_muscles
+    subplot(L,L,i)
+    [linenv, RMS] = lin_env(data_EMG.(EMG_names{i}),10, SR_ENG, 88);
     Results.EMG.linenv(:,i) = linenv;
     Results.EMG.RMS(:,i) = RMS;
-    plot(times(35000:39000), data.(names{i})((35000:39000)));
+    plot(t_EMG(35000:39000), data_EMG.(EMG_names{i})((35000:39000)));
     hold on
-    plot(times(35000:39000), Results.EMG.linenv((35000:39000),i), 'color', 'k');
+    plot(t_EMG(35000:39000), Results.EMG.linenv((35000:39000),i), 'color', 'k');
     hold on
-    plot(times(35000:39000), Results.EMG.RMS((35000:39000),i), 'color', 'red');
-    legend(names{i}, 'Butterworth Low', 'RMS')
+    plot(t_EMG(35000:39000), Results.EMG.RMS((35000:39000),i), 'color', 'red');
+    legend(EMG_names{i}, 'Butterworth Low', 'RMS')
 end
 
 
 %% Analyse Marker data
-t2 = [];
-for i = 1 : length(data.LTOE)
-    t2(i) = i* 1/data.marker_sr ;
-end 
-
-figure
-
-
-for i=19:22
-    plot_ind = 220+(i-18);
-    subplot(plot_ind)
-    d = normal(data.(names{i})(:,3));
-    d2 = normal(data.(names{i+4})(:,3));
-    plot(t2(3500:4000), d(3500:4000))
-    hold on
-    plot(t2(3500:4000), d2(3500:4000));
-    hold on
-    title(names{i},' Z coordinate');
-    legend('left', 'right')
-end
-
-
-%%
-figure
-for i=19:22
-    plot_ind = 420+(i-18);
-    subplot(plot_ind)
-    d = normal(data.(names{i})(:,1));
-    d2 = normal(data.(names{i+4})(:,1));
-    plot(t2(3500:4000), d(3500:4000))
-    hold on
-    plot(t2(3500:4000), d2(3500:4000));
-    hold on
-    title(names{i},'X coordinate');
-    legend('left', 'right')
-end
 
 
 figure
-for i=19:22
-    plot_ind = 420+(i-18);
-    subplot(plot_ind)
-    d = normal(data.(names{i})(:,2));
-    d2 = normal(data.(names{i+4})(:,2));
-    plot(t2(3500:4000), d(3500:4000))
+
+Marker_names = fieldnames(data_markers);
+num_markers = length(Marker_names);
+
+L=ceil(num_markers^.5);
+for i=1:1:num_markers
+    subplot(L,L,i)
+    d = normal(data_markers.(Marker_names{i})(:,3));
+    plot(t_Markers(3500:4000), d(3500:4000))
     hold on
-    plot(t2(3500:4000), d2(3500:4000));
-    hold on
-    title(names{i},'Y coordinate');
-    legend('left', 'right')
+    title(Marker_names{i},' Z coordinate');
 end
+
+figure
+
+for i=1:1:num_markers
+    subplot(L,L,i)
+    d = normal(data_markers.(Marker_names{i})(:,1));
+    plot(t_Markers(3500:4000), d(3500:4000))
+    hold on
+    title(Marker_names{i},' X coordinate');
+end
+
+figure
+
+for i=1:1:num_markers
+    subplot(L,L,i)
+    d = normal(data_markers.(Marker_names{i})(:,1));
+    plot(t_Markers(3500:4000), d(3500:4000))
+    hold on
+    title(Marker_names{i},' Y coordinate');
+end
+
 
 %% Cut gait cycles by using the ankle position
-mid_stance = zeros(length(data.RANK(:, 3)), 1);
-norm_ank_r = normal(data.RANK(:, 3)) ;
-norm_ank_l = normal(data.LANK(:, 3));
+mid_stance = zeros(length(data_markers.RANK(:, 3)), 1);
+norm_ank_r = normal(data_markers.RANK(:, 3)) ;
+norm_ank_l = normal(data_markers.LANK(:, 3));
 ind_list = [];
 ind_list(1) = 0;
 val_list = [];
-for  i=2:length(t2)
-    if (abs(norm_ank_r(i) - norm_ank_l(i)) < 0.5)
-        if ((i - ind_list(end))>30)
+for  i=2:length(t_Markers)
+    if (abs(norm_ank_r(i) - norm_ank_l(i)) < 1)
+        if ((i - ind_list(end))>15)
             mid_stance(i) = 1;
             ind_list = vertcat(ind_list, i);
             val_list = vertcat(val_list, norm_ank_r(i));
@@ -137,13 +151,13 @@ function [z, rmsv] = lin_env(data, fco, fs, ts)
     x = data;
     y =abs(x-mean(x));
     [b,a]=butter(4,fco*1.25/fnyq);
-    z=filtfilt(b,a,y)*5;
-    rmsv = sqrt(movmean(y.^2, ts))*5;   
+    z=filtfilt(b,a,y);
+    rmsv = sqrt(movmean(y.^2, ts));   
 
 end
 
 function out = normal(data)
-    out = lowpass(data-mean(data), 1, 100);
+    out = lowpass(data-mean(data), 10, 100);
 
 end
 
