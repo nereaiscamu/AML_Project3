@@ -23,54 +23,10 @@ dataset_list = [{'DM002_TDM_1kmh_NoEES.mat'};{'DM002_TDM_08_1kmh.mat'}; {'DM002_
 
 
 %%
-
 for i=1:length(dataset_list)
-    [linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ] = main(cell2mat(dataset_list(i)), i);
-    close all;
-    if i == 1
-        disp('True1')
-        Results.Patient_NoEES.EMG.linenv = linenv_list;
-        Results.Patient_NoEES.EMG.RMS = RMS_list;
-        Results.Patient_NoEES.markers.stance = ind_list(2:end);
-        Results.Patient_NoEES.Lgct = mean(diff(Llocs/SR_Markers));
-        Results.Patient_NoEES.Rgct = mean(diff(Rlocs/SR_Markers));
-    elseif  i == 2
-        disp('True2')
-        Results.Patient_EES_1km.EMG.linenv = linenv_list;
-        Results.Patient_EES_1km.EMG.RMS = RMS_list;
-        Results.Patient_EES_1km.markers.stance = ind_list(2:end);
-        Results.Patient_EES_1km.Lgct = mean(diff(Llocs/SR_Markers));
-        Results.Patient_EES_1km.Rgct = mean(diff(Llocs/SR_Markers));
-    elseif i == 3
-        disp('True3')
-        Results.Patient_EES_gradient.EMG.linenv = linenv_list;
-        Results.Patient_EES_gradient.EMG.RMS = RMS_list;
-        Results.Patient_EES_gradient.markers.stance = ind_list(2:end);
-        Results.Patient_EES_gradient.Lgct = mean(diff(Llocs/SR_Markers));
-        Results.Patient_EES_gradient.Rgct = mean(diff(Llocs/SR_Markers));
-    elseif i == 4
-        disp('True4')
-        Results.Healthy1.EMG.linenv = linenv_list;
-        Results.Healthy1.EMG.RMS = RMS_list;
-        Results.Healthy1.markers.stance = ind_list(2:end);
-        Results.Healthy1.Lgct = mean(diff(Llocs/SR_Markers));
-        Results.Healthy1.Rgct = mean(diff(Llocs/SR_Markers));
-    elseif i == 5
-        disp('True5')
-        Results.Healthy2.EMG.linenv = linenv_list;
-        Results.Healthy2.EMG.RMS = RMS_list;
-        Results.Healthy2.markers.stance = ind_list(2:end);
-        Results.Healthy2.Lgct = mean(diff(Llocs/SR_Markers));
-        Results.Healthy2.Rgct = mean(diff(Llocs/SR_Markers));
-    elseif i == 6
-        disp('True6')
-        Results.Healthy3.EMG.linenv = linenv_list;
-        Results.Healthy3.EMG.RMS = RMS_list;
-        Results.Healthy3.markers.stance = ind_list(2:end);
-        Results.Healthy3.Lgct = mean(diff(Llocs/SR_Markers));
-        Results.Healthy3.Rgct = mean(diff(Llocs/SR_Markers));
-    end
+    main(cell2mat(dataset_list(i)), i)
 end
+
 
 function [linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ] = main(dataset_name, dataset_number)
     %%  ------------- (1) ASSIGNEMENT 1: Varibales Healthy Gait ----------------------
@@ -254,6 +210,55 @@ function [linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ] = main(dat
 
 end 
     
+    %% RESULT STRUCTURE
+    function out = restructure(linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ) 
+        if dataset == 1
+            disp('True1')
+            Results.Patient_NoEES.EMG.linenv = linenv_list;
+            Results.Patient_NoEES.EMG.RMS = RMS_list;
+            Results.Patient_NoEES.markers.stance = ind_list(2:end);
+            Results.Patient_NoEES.Lgct = mean(diff(Llocs/SR_Markers));
+            Results.Patient_NoEES.Rgct = mean(diff(Rlocs/SR_Markers));
+        elseif  dataset == 2
+            disp('True2')
+            Results.Patient_EES_1km.EMG.linenv = linenv_list;
+            Results.Patient_EES_1km.EMG.RMS = RMS_list;
+            Results.Patient_EES_1km.markers.stance = ind_list(2:end);
+            Results.Patient_EES_1km.Lgct = mean(diff(Llocs/SR_Markers));
+            Results.Patient_EES_1km.Rgct = mean(diff(Llocs/SR_Markers));
+        elseif dataset == 3
+            disp('True3')
+            Results.Patient_EES_gradient.EMG.linenv = linenv_list;
+            Results.Patient_EES_gradient.EMG.RMS = RMS_list;
+            Results.Patient_EES_gradient.markers.stance = ind_list(2:end);
+            Results.Patient_EES_gradient.Lgct = mean(diff(Llocs/SR_Markers));
+            Results.Patient_EES_gradient.Rgct = mean(diff(Llocs/SR_Markers));
+        elseif dataset == 4
+            disp('True4')
+            Results.Healthy1.EMG.linenv = linenv_list;
+            Results.Healthy1.EMG.RMS = RMS_list;
+            Results.Healthy1.markers.stance = ind_list(2:end);
+            Results.Healthy1.Lgct = mean(diff(Llocs/SR_Markers));
+            Results.Healthy1.Rgct = mean(diff(Llocs/SR_Markers));
+        elseif dataset == 5
+            disp('True5')
+            Results.Healthy2.EMG.linenv = linenv_list;
+            Results.Healthy2.EMG.RMS = RMS_list;
+            Results.Healthy2.markers.stance = ind_list(2:end);
+            Results.Healthy2.Lgct = mean(diff(Llocs/SR_Markers));
+            Results.Healthy2.Rgct = mean(diff(Llocs/SR_Markers));
+        elseif dataset == 6
+            disp('True6')
+            Results.Healthy3.EMG.linenv = linenv_list;
+            Results.Healthy3.EMG.RMS = RMS_list;
+            Results.Healthy3.markers.stance = ind_list(2:end);
+            Results.Healthy3.Lgct = mean(diff(Llocs/SR_Markers));
+            Results.Healthy3.Rgct = mean(diff(Llocs/SR_Markers));
+        end
+
+    close all;
+end
+
 function [z, rmsv] = lin_env(data, fco, fs, ts)
     fnyq = fs/2;
     % x = bandpass(data, [fb1 fb2],fs ); not needed as data is already
