@@ -19,14 +19,14 @@ DATASET6 = ['AML_02_3.mat'];
 
 
 Results = [];
-dataset_list = [{'DM002_TDM_1kmh_NoEES.mat'};{'DM002_TDM_08_1kmh.mat'}; {'DM002_TDM_08_2kmh.mat'}; {'AML_02_1.mat'}; {'AML_02_2.mat'};{'AML_02_3.mat'}];
-
+%dataset_list = [{'DM002_TDM_1kmh_NoEES.mat'};{'DM002_TDM_08_1kmh.mat'}; {'DM002_TDM_08_2kmh.mat'}; {'AML_02_1.mat'}; {'AML_02_2.mat'};{'AML_02_3.mat'}];
+dataset_list = [ {'AML_02_1.mat'}];
 
 %%
 
 for i=1:length(dataset_list)
-    [linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ] = main(cell2mat(dataset_list(i)), i);
-    close all;
+    [linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ] = main(cell2mat(dataset_list(i)), 4);
+    %close all;
     if i == 1
         disp('True1')
         Results.Patient_NoEES.EMG.linenv = linenv_list;
@@ -134,7 +134,7 @@ function [linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ] = main(dat
     num_muscles = length(EMG_names);
     
     %% PLOT EMG SIGNAL AFTER PREPROCESSING (LINEAR ENVELOPE)
-    % (RMS and linear envelope reflects¡ the physiological activity during 
+    % (RMS and linear envelope reflects the physiological activity during 
     % contraction)
     linenv_list = [];
     RMS_list = [];
@@ -142,7 +142,7 @@ function [linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ] = main(dat
     % L=ceil(num_muscles^.5);
     for i=1:1:num_muscles
         subplot(2,num_muscles/2,i)
-        [linenv, RMS] = lin_env(data_EMG.(EMG_names{i}),10, SR_ENG, 88);
+        [linenv, RMS] = lin_env(data_EMG.(EMG_names{i}),10, SR_ENG, 300);
         linenv_list = horzcat(linenv_list, linenv);
         RMS_list = horzcat(RMS_list, RMS);
         plot(t_EMG(35000:39000), data_EMG.(EMG_names{i})((35000:39000)));
@@ -255,12 +255,15 @@ function [linenv_list,RMS_list, ind_list, Llocs, Rlocs,  SR_Markers ] = main(dat
 end 
     
 function [z, rmsv] = lin_env(data, fco, fs, ts)
+%The cutoff frequency is adjusted upward by 25% because the filter will be 
+% applied twice (forward and backward). The adjustment assures that the 
+% actual -3dB frequency after two passes will be the desired fco specified
+% above. This 25% adjustment factor is correct for a 2nd order Butterworth;
+% for a 4th order Butterworth used twice, multiply by 1.116.
     fnyq = fs/2;
-    % x = bandpass(data, [fb1 fb2],fs ); not needed as data is already
-    % bandpass
     x = data;
     y =abs(x-mean(x));
-    [b,a]=butter(4,fco*1.25/fnyq);
+    [b,a]=butter(4,fco* 1.116/fnyq, "low");
     z=filtfilt(b,a,y);
     rmsv = sqrt(movmean(y.^2, ts));   
 
@@ -275,4 +278,19 @@ function out = normal2(data)
     out = (data-min(data)) / (max(data)-min(data));
 
 end
+
+
+function [xfft, Pxx] = spectrum(x, SR)
+    fnyq = SR/2;
+    N=length(x); 
+    freqs=0:(SR/N):10; 
+    %Next: compute fft and plot the amplitude spectrum, up to 10Hz. 
+    xfft = fft(x-mean(x)); 
+    figure; 
+    plot(freqs,abs(xfft(1:2559))); 
+    %Next: compute and plot the power spectrum, up to 10Hz.
+    Pxx = xfft.*conj(xfft); 
+    figure; 
+    plot(freqs,abs(Pxx(1:2559))); 
+end 
 
