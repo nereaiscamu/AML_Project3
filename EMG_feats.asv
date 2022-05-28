@@ -167,11 +167,6 @@ end
 % Bicepts femoris antagonist of quadriceps
 % Rectus femoris (one of the quadriceps group) --> antagonist hamstring
 % Vastus lateralis --> antagonist biceps femoris
-% Tibialis anterioris --> plantar flexion --> antagonist 
-% Semitendinosus --> flexion of the knee --> antagonist quadriceps
-% Medial gastrocnemius --> plantar flexes foot, flexes knee --> antagonist
-% TA
-% SOleus ---> plantarflexion --> antagonist TA
 
 
 function bursts_dur = compute_duration(onsets, offsets, SR)
