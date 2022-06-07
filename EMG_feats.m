@@ -72,24 +72,29 @@ num_markers = length(Marker_names);
 EMG_names = fieldnames(data_EMG);
 num_muscles = length(EMG_names);
 
-% First apply pre-processing as in main
-linenv_list = [];
+% First apply pre-processing 
+lowpass_list = [];
 RMS_list = [];
+linenv_list2 = [];
 figure
 % L=ceil(num_muscles^.5);
 for i=1:1:num_muscles
     subplot(2,num_muscles/2,i)
-    [linenv, RMS] = lin_env(data_EMG.(EMG_names{i}),10, SR_EMG, 300);
-    linenv_list = horzcat(linenv_list, linenv);
+    [low, RMS, env] = lin_env(data_EMG.(EMG_names{i}),10, SR_EMG, 250);
+    lowpass_list = horzcat(lowpass_list, low);
     RMS_list = horzcat(RMS_list, RMS);
-    plot(t_EMG(35000:39000), data_EMG.(EMG_names{i})((35000:39000)));
+    linenv_list2 = horzcat(linenv_list2, env);
+    plot(t_EMG(35000:45000), data_EMG.(EMG_names{i})((35000:45000)));
     hold on
-    plot(t_EMG(35000:39000), linenv_list((35000:39000),i), 'color', 'k');
+    plot(t_EMG(35000:45000), linenv_list2((35000:45000),i), 'color', 'g');
     hold on
-    plot(t_EMG(35000:39000), RMS_list((35000:39000),i), 'color', 'red');
-    legend(EMG_names{i}, 'Butterworth Low', 'RMS', 'Location', 'south')
+    plot(t_EMG(35000:45000), lowpass_list((35000:45000),i), 'color', 'k');
+    hold on
+    plot(t_EMG(35000:45000), RMS_list((35000:45000),i), 'color', 'red');
+    legend(EMG_names{i}, 'Liniar envelope', 'Butterworth Low', 'RMS', 'Location', 'south')
     title(EMG_names{i})
 end
+
 
 %% 1- POWER SPECTRUM
 % I only plot until freq 10 as we applied previously a low pass filter with
@@ -236,7 +241,7 @@ function [xfft, Pxx] = spectrum(x)
 end 
 
 
-function [z, rmsv] = lin_env(data, fco, fs, ts)
+function [z, rmsv, env] = lin_env(data, fco, fs, ts)
 %The cutoff frequency is adjusted upward by 25% because the filter will be 
 % applied twice (forward and backward). The adjustment assures that the 
 % actual -3dB frequency after two passes will be the desired fco specified
@@ -247,6 +252,14 @@ function [z, rmsv] = lin_env(data, fco, fs, ts)
     y =abs(x-mean(x));
     [b,a]=butter(4,fco* 1.116/fnyq, "low");
     z=filtfilt(b,a,y);
-    rmsv = sqrt(movmean(y.^2, ts));   
+    rmsv = sqrt(movmean(y.^2, ts));  
+    filtered_data_12 =bandpass(data,[10 2000], fs);
+    filtered_data_abs = abs(filtered_data_12);
+    filtered_data_3 = highpass(filtered_data_abs,30, fs);
+    filtered_data_4 = bandstop(filtered_data_3,[30 70], fs);
+    [env,l] = envelope(filtered_data_4,50,'rms');
 
 end
+
+
+
