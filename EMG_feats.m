@@ -75,18 +75,18 @@ num_muscles = length(EMG_names);
 % First apply pre-processing 
 lowpass_list = [];
 RMS_list = [];
-linenv_list2 = [];
+env_list = [];
 figure
 % L=ceil(num_muscles^.5);
 for i=1:1:num_muscles
     subplot(2,num_muscles/2,i)
-    [low, RMS, env] = lin_env(data_EMG.(EMG_names{i}),10, SR_EMG, 250);
+    [low, RMS, env] = EMG_prepross(data_EMG.(EMG_names{i}),10, SR_EMG, 250);
     lowpass_list = horzcat(lowpass_list, low);
     RMS_list = horzcat(RMS_list, RMS);
-    linenv_list2 = horzcat(linenv_list2, env);
+    env_list = horzcat(env_list, env);
     plot(t_EMG(35000:45000), data_EMG.(EMG_names{i})((35000:45000)));
     hold on
-    plot(t_EMG(35000:45000), linenv_list2((35000:45000),i), 'color', 'g');
+    plot(t_EMG(35000:45000), env_list((35000:45000),i), 'color', 'g');
     hold on
     plot(t_EMG(35000:45000), lowpass_list((35000:45000),i), 'color', 'k');
     hold on
@@ -108,11 +108,11 @@ figure
 
 for i=1:1:num_muscles
     subplot(2,num_muscles/2,i)
-    [amp_spec, pow_spec] = spectrum(linenv_list(:,i));
+    [amp_spec, pow_spec] = spectrum(env_list(:,i));
     amp_spec_list = horzcat(amp_spec_list, amp_spec);
     pow_spec_list = horzcat(pow_spec_list, pow_spec);
     fnyq = SR_EMG/2;
-    N=length(linenv_list(:,i)); 
+    N=length(env_list(:,i)); 
     freqs=0:(SR_EMG/N):10; 
     plot(freqs,abs(amp_spec(1:int16(10/(SR_EMG/N)+1))))
     title(strcat(EMG_names{i}, ' amplitude spectrum'))
@@ -123,11 +123,11 @@ end
 figure
 for i=1:1:num_muscles
     subplot(2,num_muscles/2,i)
-    [amp_spec, pow_spec] = spectrum(linenv_list(:,i));
+    [amp_spec, pow_spec] = spectrum(env_list(:,i));
     amp_spec_list = horzcat(amp_spec_list, amp_spec);
     pow_spec_list = horzcat(pow_spec_list, pow_spec);
     fnyq = SR_EMG/2;
-    N=length(linenv_list(:,i)); 
+    N=length(env_list(:,i)); 
     freqs=0:(SR_EMG/N):10; 
     plot(freqs,abs(pow_spec(1:int16(10/(SR_EMG/N)+1))))
     title(strcat(EMG_names{i}, ' power spectrum'))
@@ -179,87 +179,12 @@ end
 % SOleus ---> plantarflexion --> antagonist TA
 
 
-function bursts_dur = compute_duration(onsets, offsets, SR)
-    bursts_dur = [];
-    if offsets(1)<onsets(1)
-        offsets = offsets(2:end);
-    end
-    max_length = min(length(onsets), length(offsets));
-    for i=1:max_length
-        if offsets(i)-onsets(i) > 0 
-            bursts_dur = [bursts_dur; (offsets(i)-onsets(i))/SR];
-        end
-    end
-
-end
 
 
-function [onset, offset, thrs, d] = detect_bursts(sig, fs)
-    onset = [];
-    offset = [];
-    %They high-pass filtered the raw EMG before applying the TKE operator
-    %("6th order, high pass filter at 20 Hz”) 
-    % They low-pass filtered the TKE signal y(n) (“6th order, zero-phase 
-    % lowpass filter at 50 Hz”) before threshold detection. 
-    % TKE = x(n)^2 - (x(n-1)*x(n+1))
-    % Threshold = mean(TKE)+ J*std(TKE)
-    % They used J=15.
-    fnyq = fs/2;
-    x = sig;
-    y =abs(x-mean(x));
-    [b,a]=butter(6,20/fnyq, "high");
-    z=filtfilt(b,a,y);
-    [b2, a2] = butter(6,45/fnyq, "low");
-    z2 = filtfilt(b2,a2,z);    
-    c = [];    
-    for i=2:length(z2)-1
-        c(i-1) = z2(i)^2 -(z2(i+1)*z2(i-1));
-    end
-    d= sqrt(movmean(c.^2, 500)); % 500 sample window for the RMS as 
-    % it makes it easier to detect the burst    
-    rem = median(c) + 1.5*iqr(c); 
-    rest = c(c<=rem); % I use the mean only of the rest muscle period
-    thrs = mean(rest)+2*std(rest);
-    N = length(d);
-    for i=2:N
-        if d(i-1)<thrs && d(i)>=thrs && i<(N-50) && all(d(i:i+50)>=thrs)
-                onset = [onset; i];
-        end 
-        if d(i-1)>thrs && d(i)<=thrs && i>50 && all(d(i-50:i-1)>=thrs)
-                offset = [offset; i];        
-        end
-    end
-end
-
-function [xfft, Pxx] = spectrum(x)
-    %Next: compute fft and plot the amplitude spectrum, up to 10Hz. 
-    xfft = fft(x-mean(x)); 
-
-    %Next: compute and plot the power spectrum, up to 10Hz.
-    Pxx = xfft.*conj(xfft); 
-
-end 
 
 
-function [z, rmsv, env] = lin_env(data, fco, fs, ts)
-%The cutoff frequency is adjusted upward by 25% because the filter will be 
-% applied twice (forward and backward). The adjustment assures that the 
-% actual -3dB frequency after two passes will be the desired fco specified
-% above. This 25% adjustment factor is correct for a 2nd order Butterworth;
-% for a 4th order Butterworth used twice, multiply by 1.116.
-    fnyq = fs/2;
-    x = data;
-    y =abs(x-mean(x));
-    [b,a]=butter(4,fco* 1.116/fnyq, "low");
-    z=filtfilt(b,a,y);
-    rmsv = sqrt(movmean(y.^2, ts));  
-    filtered_data_12 =bandpass(data,[10 2000], fs);
-    filtered_data_abs = abs(filtered_data_12);
-    filtered_data_3 = highpass(filtered_data_abs,30, fs);
-    filtered_data_4 = bandstop(filtered_data_3,[30 70], fs);
-    [env,l] = envelope(filtered_data_4,50,'rms');
 
-end
+
 
 
 
