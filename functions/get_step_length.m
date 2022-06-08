@@ -1,4 +1,4 @@
-function [Rmean_step_length, Lmean_step_length] = get_step_length(RANK, LANK, RICs, LICs, Treadmillspeed, freq)
+function [Rmean_step_length, Lmean_step_length, Rstep_length, Lstep_length] = get_step_length(RANK, LANK, RICs, LICs, Treadmillspeed, freq)
     steps = min(length(RICs), length(LICs));
 
     if RICs(1) < LICs(1)

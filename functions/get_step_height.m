@@ -1,4 +1,4 @@
-function [Rmean_step_height, Lmean_step_height] = get_step_height(RTOs, LTOs, RANK, LANK)
+function [Rmean_step_height, Lmean_step_height, Rstep_height, Lstep_height ] = get_step_height(RTOs, LTOs, RANK, LANK)
     Rstep_height = [];
     Lstep_height = [];
     for i = 1:length(RTOs)-1

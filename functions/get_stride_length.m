@@ -1,4 +1,4 @@
-function [Rmean_stride_length, Lmean_stride_length, Rvar_stride_length, Lvar_stride_length] = get_stride_length(RANK, LANK, RICs, LICs, Treadmillspeed, freq)
+function [Rmean_stride_length, Lmean_stride_length, Rvar_stride_length, Lvar_stride_length, Rstride_length, Lstride_length] = get_stride_length(RANK, LANK, RICs, LICs, Treadmillspeed, freq)
     
     Lx = transpose(diff(LANK(LICs,2)))/1000;
     Lt = double(diff(LICs))/freq;

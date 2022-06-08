@@ -1,16 +1,35 @@
 %% PCA implementation
 % Note: before running PCA all features should be normalized
 % we can standardize the data by using zscore
+clear all; close all;
 
-pca_data = zscore(results');
+load Patient_data
+load Healthy_data
+
+dataset_list1 = ['AML_01_1.mat'; 'AML_01_2.mat';'AML_01_3.mat'; 
+    'AML_02_1.mat'; 'AML_02_2.mat';'AML_02_3.mat'];
+dataset_list2 = ["DM002_TDM_08_1kmh.mat"; 
+    "DM002_TDM_08_2kmh.mat"; "DM002_TDM_1kmh_NoEES.mat"];
+[X1, labels1] = create_data_matrix(dataset_list1, Params_Healthy_cyclesplit);
+
+[X2, labels2] = create_data_matrix(dataset_list2, Params_Patient_cyclesplit);
+labels1 = repelem(1,length(labels1))';
+labels2 = labels2+1;
+%%
+X = [X1;X2];
+labels = [labels1;labels2];
+pca_data = zscore(X);
+mapcaplot(X,labels)
 
 
-PC_comps = pca(results);
+
+%% Standardize the data previous to PCA
+
+
+[coefs, score] = pca(pca_data);
 % this should give a matrix where the columns are the PC and the
 % rows the weights of each feature in the PC
 % If I understood correctly we only need the 2 first PCs
-
-
 % Once we run the PCA, different options for visualization: 
 
 
@@ -28,32 +47,31 @@ PC_comps = pca(results);
 % point in the plot. Press and hold Ctrl or Shift to 
 % select multiple data points.
 % Export the gene labels and indices to the MATLAB® workspace.
-
-mapcaplot(data,labels)
-
-
+varlabels = fieldnames(Params_Healthy_cyclesplit.AML_01_1);
+h1 = biplot(coefs(:,1:2),'Scores',score(:,1:2),...
+    'Color','b','Marker','o','VarLabels',varlabels);
 
 
 
 %% 2- Another option for visualization: biplots
-
-%    first 4 eigenvectors biplots
-       biplot_dimensions(coefs,score,1:2,condition)
-       
-       biplot_dimensions(coefs,score,2:3,condition)
-       
-       biplot_dimensions(coefs,score,3:4,condition)
-
-       biplot_dimensions(coefs,score,[3, 1],condition)
-
-       biplot_dimensions(coefs,score,[4, 1],condition)
-
-       biplot_dimensions(coefs,score,[4, 2],condition)
-       %    content of the first 4 eigenvectors
-       
-       bar_eigenvector(coefs,1,field_names)
-       bar_eigenvector(coefs,2,field_names)
-       bar_eigenvector(coefs,3,field_names)
-       bar_eigenvector(coefs,4,field_names)
-    
+[coefforth,score,~,~,explainedVar] = pca(pca_data);
+figure()
+% Store handle to biplot
+h = biplot([coefforth(:,1) coefforth(:,2)],'Scores',[score(:,1) score(:,2)],'Varlabels',varlabels);
+% Identify each handle
+hID = get(h, 'tag'); 
+% Isolate handles to scatter points
+hPt = h(strcmp(hID,'obsmarker')); 
+% Identify cluster groups
+grp = findgroups(labels);    %r2015b or later - leave comment if you need an alternative
+grp(isnan(grp)) = max(grp(~isnan(grp)))+1; 
+grpID = 1:max(grp); 
+% assign colors and legend display name
+clrMap = lines(length(unique(grp)));   % using 'lines' colormap
+for i = 1:max(grp)
+    set(hPt(grp==i), 'Color', clrMap(i,:), 'DisplayName', sprintf('Cluster %d', grpID(i)))
 end
+% add legend to identify cluster
+[~, unqIdx] = unique(grp);
+legend(hPt(unqIdx))
+    

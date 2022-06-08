@@ -1,4 +1,4 @@
-function [Rmean_corr_KA, Lmean_corr_KA] = get_correlation_KA(RTOs, LTOs, RKNE, LKNE, RANK, LANK)
+function [Rmean_corr_KA, Lmean_corr_KA, Rcorr_KA, Lcorr_KA] = get_correlation_KA(RTOs, LTOs, RKNE, LKNE, RANK, LANK)
     Rcorr_KA = [];
     Lcorr_KA = [];
     for i = 1:length(RTOs)-1

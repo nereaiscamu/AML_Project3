@@ -1,4 +1,4 @@
-function[Rmean_endpoint_vel, Lmean_endpoint_vel] = get_endpoint_vel(RTOs, LTOs, RANK, LANK, freq)
+function[Rmean_endpoint_vel, Lmean_endpoint_vel, Rendpoint_vel, Lendpoint_vel] = get_endpoint_vel(RTOs, LTOs, RANK, LANK, freq)
     Rendpoint_vel = [];
     Lendpoint_vel = [];
     for i = 1:length(RTOs)-1

@@ -1,4 +1,4 @@
-function [Rmean_ratio_fl, Lmean_ratio_fl] = get_ratio_fl(RTOs, LTOs, RANK, LANK)
+function [Rmean_ratio_fl, Lmean_ratio_fl, Rratio_fl, Lratio_fl ] = get_ratio_fl(RTOs, LTOs, RANK, LANK)
     Rratio_fl = [];
     Lratio_fl = [];
     for i = 1:length(RTOs)-1

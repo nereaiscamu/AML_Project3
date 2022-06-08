@@ -1,4 +1,4 @@
-function [Rmean_interlimb_coord, Lmean_interlimb_coord] = get_interlimb_coord(RTOs, LTOs, RICs, LICs, freq)
+function [Rmean_interlimb_coord, Lmean_interlimb_coord, R_interlimb_coord, L_interlimb_coord] = get_interlimb_coord(RTOs, LTOs, RICs, LICs, freq)
     RTOs
     RICs
     LTOs

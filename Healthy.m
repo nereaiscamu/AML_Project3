@@ -10,6 +10,7 @@ LAST_NAME3 = 'Carbonell'; % Last name 3
 GROUP_NAME = 'G'; % your dataset number
 
 Params_Healthy = [];
+Params_Healthy_cyclesplit = [];
 dataset_list = ['AML_01_1.mat'; 'AML_01_2.mat';'AML_01_3.mat'; 'AML_02_1.mat'; 'AML_02_2.mat';'AML_02_3.mat'];
 
 %% Gait event dedection
@@ -44,11 +45,17 @@ for idx = 1:6
     Lcycle_durations = diff(LTOs);
     Params_Healthy.(name).Rcycle_duration = mean(Rcycle_durations)/freq;
     Params_Healthy.(name).Lcycle_duration = mean(Lcycle_durations)/freq;
-    
+    Params_Healthy_cyclesplit.(name).Rcycle_duration = (Rcycle_durations)/freq;
+    Params_Healthy_cyclesplit.(name).Lcycle_duration = (Lcycle_durations)/freq;
+
     Params_Healthy.(name).RTOs = RTOs;
     Params_Healthy.(name).LTOs = LTOs;
     Params_Healthy.(name).RICs = RICs;
     Params_Healthy.(name).LICs = LICs;
+    Params_Healthy_cyclesplit.(name).(name).RTOs = RTOs;
+    Params_Healthy_cyclesplit.(name).(name).LTOs = LTOs;
+    Params_Healthy_cyclesplit.(name).RICs = RICs;
+    Params_Healthy_cyclesplit.(name).LICs = LICs;
 
     %Treadmill speed
     Treadmillspeed = get_treadmill(name, RANK, freq);
