@@ -108,7 +108,7 @@ figure
 
 for i=1:1:num_muscles
     subplot(2,num_muscles/2,i)
-    [amp_spec, pow_spec] = spectrum(env_list(:,i));
+    [amp_spec, pow_spec] = spectrum1(env_list(:,i), SR_EMG);
     amp_spec_list = horzcat(amp_spec_list, amp_spec);
     pow_spec_list = horzcat(pow_spec_list, pow_spec);
     fnyq = SR_EMG/2;
@@ -123,7 +123,7 @@ end
 figure
 for i=1:1:num_muscles
     subplot(2,num_muscles/2,i)
-    [amp_spec, pow_spec] = spectrum(env_list(:,i));
+    [amp_spec, pow_spec] = spectrum1(env_list(:,i), SR_EMG);
     amp_spec_list = horzcat(amp_spec_list, amp_spec);
     pow_spec_list = horzcat(pow_spec_list, pow_spec);
     fnyq = SR_EMG/2;
@@ -180,7 +180,16 @@ end
 
 
 
-
+function [xfft, Pxx] = spectrum1(x, SR)
+    fnyq = SR/2;
+    N=length(x); 
+    freqs=0:(SR/N):10; 
+    %Next: compute fft and plot the amplitude spectrum, up to 10Hz. 
+    xfft = fft(x-mean(x)); 
+    %Next: compute and plot the power spectrum, up to 10Hz.
+    Pxx = xfft.*conj(xfft); 
+   
+end 
 
 
 

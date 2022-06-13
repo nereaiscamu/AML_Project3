@@ -136,7 +136,7 @@ for idx = 1:6
 
 
     %Whole-limb angular velocity based on thigh
-    [Rmean_limb_angular_vel, Lmean_limb_angular_vel, R_limb_ang_vel, L_limb_ang_vel] = get_limb_angular_vel(RHIP, LHIP, RKNE, LKNE, freq);
+    [Rmean_limb_angular_vel, Lmean_limb_angular_vel, R_limb_ang_vel, L_limb_ang_vel] = get_limb_angular_vel(RHIP, LHIP, RKNE, LKNE, freq, RTOs, LTOs);
     Params_Healthy.(name).Rmean_limb_angular_vel = Rmean_limb_angular_vel;
     Params_Healthy.(name).Lmean_limb_angular_vel = Lmean_limb_angular_vel;
     Params_Healthy_cyclesplit.(name).R_limb_ang_vel = R_limb_ang_vel;
