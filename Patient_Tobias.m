@@ -55,10 +55,7 @@ for idx = 1:3
     Params_Patient.(name).LTOs = LTOs;
     Params_Patient.(name).RICs = RICs;
     Params_Patient.(name).LICs = LICs;
-    Params_Patient_cyclesplit.(name).RTOs = RTOs';
-    Params_Patient_cyclesplit.(name).LTOs = LTOs';
-    Params_Patient_cyclesplit.(name).RICs = RICs';
-    Params_Patient_cyclesplit.(name).LICs = LICs';												  
+											  
 
     %Treadmill speed
     Treadmillspeed = get_treadmill(name, RANK, freq);
@@ -107,11 +104,11 @@ for idx = 1:3
     Params_Patient_cyclesplit.(name).L_endpoint_vel = L_endpoint_vel;																 
 
     %Ratio between forward and lateral movement
-    [Rmean_ratio_fl, Lmean_ratio_fl,  R_ratio_fl, R_ratio_fl] = get_ratio_fl(RTOs, LTOs, RANK, LANK);
+    [Rmean_ratio_fl, Lmean_ratio_fl,  R_ratio_fl, L_ratio_fl] = get_ratio_fl(RTOs, LTOs, RANK, LANK);
     Params_Patient.(name).Rmean_ratio_fl = Rmean_ratio_fl;
     Params_Patient.(name).Lmean_ratio_fl = Lmean_ratio_fl;
     Params_Patient_cyclesplit.(name).R_ratio_fl = R_ratio_fl;
-    Params_Patient_cyclesplit.(name).R_ratio_fl = R_ratio_fl;															 
+    Params_Patient_cyclesplit.(name).L_ratio_fl = L_ratio_fl;															 
 
     %Gait stability
     [Mean_gait_stability, gait_stability] = get_gait_stability(RHIP, LHIP, RTOs, LTOs);

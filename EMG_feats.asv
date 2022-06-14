@@ -11,8 +11,8 @@ DATASET5 = ['AML_02_2.mat'];
 DATASET6 = ['AML_02_3.mat'];
 
 
-dataset_name = DATASET4;
-dataset = 4;
+dataset_name = DATASET2;
+dataset = 2;
 load(dataset_name); % choose which datastructure to load
 if dataset <4
     N_EMG = length(data.LTA);
@@ -84,14 +84,14 @@ for i=1:1:num_muscles
     lowpass_list = horzcat(lowpass_list, low);
     RMS_list = horzcat(RMS_list, RMS);
     env_list = horzcat(env_list, env);
-    plot(t_EMG(35000:45000), data_EMG.(EMG_names{i})((35000:45000)));
+    plot(t_EMG(30000:45000), data_EMG.(EMG_names{i})((30000:45000)));
     hold on
-    plot(t_EMG(35000:45000), env_list((35000:45000),i), 'color', 'g');
+    plot(t_EMG(30000:45000), env_list((30000:45000),i), 'color', 'g');
     hold on
-    plot(t_EMG(35000:45000), lowpass_list((35000:45000),i), 'color', 'k');
+    plot(t_EMG(30000:45000), lowpass_list((30000:45000),i), 'color', 'k');
     hold on
-    plot(t_EMG(35000:45000), RMS_list((35000:45000),i), 'color', 'red');
-    legend(EMG_names{i}, 'Liniar envelope', 'Butterworth Low', 'RMS', 'Location', 'south')
+    plot(t_EMG(30000:45000), RMS_list((30000:45000),i), 'color', 'red');
+    legend(EMG_names{i}, 'Envelope', 'Butterworth Low', 'RMS', 'Location', 'south')
     title(EMG_names{i})
 end
 
