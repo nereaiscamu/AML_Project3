@@ -135,6 +135,9 @@ for i=1:1:num_muscles
 end
 
 
+
+
+
 %% 2- BURST DURATION --> needs to be adapted when dividing data into gait cycles
 
 close all;

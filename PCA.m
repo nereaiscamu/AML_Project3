@@ -82,6 +82,20 @@ varlabels = fieldnames(Params_Healthy_cyclesplit.AML_01_1);
 varlabels2 = strcat(fieldnames(Params_Healthy_cyclesplit.AML_01_1), '_var');
 varlabels_tot =  [varlabels;varlabels2];
 
+new_varlabels = {};
+for i=1:length(varlabels)
+    new_varlabels{i} = strrep(varlabels{i},'_',' ');
+end
+new_varlabels = new_varlabels';
+
+new_varlabels_tot = {};
+for i=1:length(varlabels_tot)
+    new_varlabels_tot{i} = strrep(varlabels_tot{i},'_',' ');
+end
+new_varlabels_tot = new_varlabels_tot';
+
+
+%%
 
 h1 = biplot(coefs(:,1:2),'Scores',score(:,1:2),...
     'Color','b','Marker','o','VarLabels',varlabels);
@@ -138,18 +152,20 @@ legend(hPt(unqIdx))
 
 %% Feature loading
 unscaled_loading = coefs.*sqrt(latent)';
-
-new_varlabels = {};
-for i=1:length(varlabels)
-    new_varlabels{i} = strrep(varlabels{i},'_',' ');
-end
-new_varlabels = new_varlabels';
-
 figure
 barh(unscaled_loading(:,1))
-yticks(1:40)
+yticks(1:29)
 yticklabels(new_varlabels)
-xlim([-0.7, 1])
+xlim([-0.9, 1])
 
+
+%% Feature loading 2
+unscaled_loading_2 = coefs_2.*sqrt(latent_2)';
+
+figure
+barh(unscaled_loading_2(:,1))
+yticks(1:58)
+yticklabels(new_varlabels_tot)
+xlim([-0.7, 1])
 
 

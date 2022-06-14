@@ -48,8 +48,8 @@ for idx = 1:3
     Lcycle_durations = diff(LTOs);
     Params_Patient.(name).Rcycle_duration = mean(Rcycle_durations)/freq;
     Params_Patient.(name).Lcycle_duration = mean(Lcycle_durations)/freq;
-	Params_Patient_cyclesplit.(name).Rcycle_duration = (Rcycle_durations')/freq;
-    Params_Patient_cyclesplit.(name).Lcycle_duration = (Lcycle_durations')/freq;																		
+% 	Params_Patient_cyclesplit.(name).Rcycle_duration = (Rcycle_durations')/freq;
+%     Params_Patient_cyclesplit.(name).Lcycle_duration = (Lcycle_durations')/freq;																		
     
     Params_Patient.(name).RTOs = RTOs;
     Params_Patient.(name).LTOs = LTOs;
@@ -64,8 +64,8 @@ for idx = 1:3
     [Rmean_step_length, Lmean_step_length, R_step_length, L_step_length] = get_step_length(RANK, LANK, RICs, LICs, Treadmillspeed, freq);
     Params_Patient.(name).Rstep_length = Rmean_step_length;
     Params_Patient.(name).Lstep_length = Lmean_step_length;
-	Params_Patient_cyclesplit.(name).R_step_length = R_step_length';
-    Params_Patient_cyclesplit.(name).L_step_length = L_step_length';																
+% 	Params_Patient_cyclesplit.(name).R_step_length = R_step_length';
+%     Params_Patient_cyclesplit.(name).L_step_length = L_step_length';																
 
     %Stride length
 	[Rmean_stride_length, Lmean_stride_length, Rvar_stride_length, Lvar_stride_length, R_stride_length, L_stride_length] = get_stride_length(RANK, LANK, RICs, LICs, Treadmillspeed, freq);
@@ -93,7 +93,7 @@ for idx = 1:3
     [Rmean_corr_KA, Lmean_corr_KA, R_corr_KA, L_corr_KA] = get_correlation_KA(RTOs, LTOs, RKNE, LKNE, RANK, LANK);
     Params_Patient.(name).Rmean_corr_KA = Rmean_corr_KA;
     Params_Patient.(name).Lmean_corr_KA = Lmean_corr_KA;
-    Params_Patient_cyclesplit.(name).R_corr_Ka = R_corr_KA;
+    Params_Patient_cyclesplit.(name).R_corr_KA = R_corr_KA;
     Params_Patient_cyclesplit.(name).L_corr_KA = L_corr_KA;														   
 
     %Endpoint velocity
@@ -115,12 +115,7 @@ for idx = 1:3
     Params_Patient.(name).Mean_gait_stability = Mean_gait_stability;
     Params_Patient_cyclesplit.(name).gait_stability = gait_stability;
 	
-	
-	
-	
-
-
-    %Interlimb coordination
+	%Interlimb coordination
 	[Rmean_interlimb_coord, Lmean_interlimb_coord, R_interlimb_coord, L_interlimb_coord] = get_interlimb_coord(RTOs, LTOs, RICs, LICs, freq);
     Params_Patient.(name).Rmean_interlimb_coord = Rmean_interlimb_coord;
     Params_Patient.(name).Lmean_interlimb_coord = Lmean_interlimb_coord;
@@ -179,10 +174,10 @@ for idx = 1:3
 
     % Mean RMS signal for each gait cycle and muscle selected
 
-    [R_Mean_TA, L_Mean_TA] = Mean_EMG(R_env_TA, L_env_TA, RTOs_EMG, LTOs_EMG);
-    [R_Mean_ST, L_Mean_ST] = Mean_EMG(R_env_ST, L_env_ST, RTOs_EMG, LTOs_EMG);
-    [R_Mean_MG, L_Mean_MG] = Mean_EMG(R_env_MG, L_env_MG, RTOs_EMG, LTOs_EMG);
-    [R_Mean_Sol, L_Mean_Sol] = Mean_EMG(R_env_Sol, L_env_Sol, RTOs_EMG, LTOs_EMG);
+    [R_Mean_TA, L_Mean_TA, R_var_TA, L_var_TA] = Mean_EMG(R_env_TA, L_env_TA, RTOs_EMG, LTOs_EMG);
+    [R_Mean_ST, L_Mean_ST, R_var_ST, L_var_ST] = Mean_EMG(R_env_ST, L_env_ST, RTOs_EMG, LTOs_EMG);
+    [R_Mean_MG, L_Mean_MG, R_var_MG, L_var_MG] = Mean_EMG(R_env_MG, L_env_MG, RTOs_EMG, LTOs_EMG);
+    [R_Mean_Sol, L_Mean_Sol, R_var_Sol, L_var_Sol] = Mean_EMG(R_env_Sol, L_env_Sol, RTOs_EMG, LTOs_EMG);
 
     [R_split_RMS_TA, L_split_RMS_TA] = RMS_EMG(data_EMG.RTA, data_EMG.LTA, RTOs_EMG, LTOs_EMG);
     [R_split_RMS_ST, L_split_RMS_ST] = RMS_EMG(data_EMG.RST, data_EMG.LST, RTOs_EMG, LTOs_EMG);
@@ -191,21 +186,32 @@ for idx = 1:3
 
     Params_Patient_cyclesplit.(name).R_RMS_TA = R_split_RMS_TA;
     Params_Patient_cyclesplit.(name).L_RMS_TA = L_split_RMS_TA;
-    Params_Patient_cyclesplit.(name).R_RMS_ST = R_split_RMS_ST;
-    Params_Patient_cyclesplit.(name).L_RMS_ST = L_split_RMS_ST;
-    Params_Patient_cyclesplit.(name).R_RMS_MG = R_split_RMS_MG;
-    Params_Patient_cyclesplit.(name).L_RMS_MG = L_split_RMS_MG;
+%     Params_Patient_cyclesplit.(name).R_RMS_ST = R_split_RMS_ST;
+%     Params_Patient_cyclesplit.(name).L_RMS_ST = L_split_RMS_ST;
+%     Params_Patient_cyclesplit.(name).R_RMS_MG = R_split_RMS_MG;
+%     Params_Patient_cyclesplit.(name).L_RMS_MG = L_split_RMS_MG;
     Params_Patient_cyclesplit.(name).R_RMS_Sol = R_split_RMS_Sol;
     Params_Patient_cyclesplit.(name).L_RMS_Sol = L_split_RMS_Sol;
 
-    Params_Patient_cyclesplit.(name).R_Mean_TA = R_Mean_TA;
-    Params_Patient_cyclesplit.(name).L_Mean_TA = L_Mean_TA;
-    Params_Patient_cyclesplit.(name).R_Mean_ST = R_Mean_ST;
-    Params_Patient_cyclesplit.(name).L_Mean_ST = L_Mean_ST;
-    Params_Patient_cyclesplit.(name).R_Mean_MG = R_Mean_MG;
-    Params_Patient_cyclesplit.(name).L_Mean_MG = L_Mean_MG;
-    Params_Patient_cyclesplit.(name).R_Mean_Sol = R_Mean_Sol;
-    Params_Patient_cyclesplit.(name).L_Mean_Sol = L_Mean_Sol;
+%     Params_Patient_cyclesplit.(name).R_Mean_TA = R_Mean_TA;
+%     Params_Patient_cyclesplit.(name).L_Mean_TA = L_Mean_TA;
+% %     Params_Patient_cyclesplit.(name).R_Mean_ST = R_Mean_ST;
+% %     Params_Patient_cyclesplit.(name).L_Mean_ST = L_Mean_ST;
+% %     Params_Patient_cyclesplit.(name).R_Mean_MG = R_Mean_MG;
+% %     Params_Patient_cyclesplit.(name).L_Mean_MG = L_Mean_MG;
+%     Params_Patient_cyclesplit.(name).R_Mean_Sol = R_Mean_Sol;
+%     Params_Patient_cyclesplit.(name).L_Mean_Sol = L_Mean_Sol;
+
+%     Params_Patient_cyclesplit.(name).R_var_TA = R_var_TA;
+%     Params_Patient_cyclesplit.(name).L_var_TA = L_var_TA;
+% %     Params_Patient_cyclesplit.(name).R_var_ST = R_var_ST;
+% %     Params_Patient_cyclesplit.(name).L_var_ST = L_var_ST;
+% %     Params_Patient_cyclesplit.(name).R_var_MG = R_var_MG;
+% %     Params_Patient_cyclesplit.(name).L_var_MG = L_var_MG;
+%     Params_Patient_cyclesplit.(name).R_var_Sol = R_var_Sol;
+%     Params_Patient_cyclesplit.(name).L_var_Sol = L_var_Sol;
+
+
     % Burst Duration
      [R_burst_dur_TA, L_burst_dur_TA] = burst_duration(R_env_TA, L_env_TA, RTOs_EMG, LTOs_EMG, SR_EMG);
      [R_burst_dur_ST, L_burst_dur_ST] = burst_duration(R_env_ST, L_env_ST, RTOs_EMG, LTOs_EMG, SR_EMG);
@@ -233,12 +239,39 @@ for idx = 1:3
 
     Params_Patient_cyclesplit.(name).R_burst_dur_TA = R_burst_dur_TA;
     Params_Patient_cyclesplit.(name).L_burst_dur_TA = L_burst_dur_TA;
-    Params_Patient_cyclesplit.(name).R_burst_dur_ST = R_burst_dur_ST;
-    Params_Patient_cyclesplit.(name).L_burst_dur_ST = L_burst_dur_ST;
-    Params_Patient_cyclesplit.(name).R_burst_dur_MG = R_burst_dur_MG;
-    Params_Patient_cyclesplit.(name).L_burst_dur_MG = L_burst_dur_MG;
+%     Params_Patient_cyclesplit.(name).R_burst_dur_ST = R_burst_dur_ST;
+%     Params_Patient_cyclesplit.(name).L_burst_dur_ST = L_burst_dur_ST;
+%     Params_Patient_cyclesplit.(name).R_burst_dur_MG = R_burst_dur_MG;
+%     Params_Patient_cyclesplit.(name).L_burst_dur_MG = L_burst_dur_MG;
     Params_Patient_cyclesplit.(name).R_burst_dur_Sol = R_burst_dur_Sol;
     Params_Patient_cyclesplit.(name).L_burst_dur_Sol = L_burst_dur_Sol;	
+
+
+
+   % Power spectrum
+    [R_lowfreq_pow_TA, L_lowfreq_pow_TA ,R_medfreq_TA, L_medfreq_TA] = spectrum(R_env_TA, L_env_TA, 100, 50, RTOs_EMG, LTOs_EMG);
+   [R_lowfreq_pow_ST, L_lowfreq_pow_ST,R_medfreq_ST, L_medfreq_ST] = spectrum(R_env_ST, L_env_ST, 100, 50, RTOs_EMG, LTOs_EMG);
+   [R_lowfreq_pow_MG, L_lowfreq_pow_MG,R_medfreq_MG, L_medfreq_MG] = spectrum(R_env_MG, L_env_MG, 100, 50, RTOs_EMG, LTOs_EMG);
+   [R_lowfreq_pow_Sol, L_lowfreq_pow_Sol,R_medfreq_Sol, L_medfreq_Sol] = spectrum(R_env_Sol, L_env_Sol, 100, 50, RTOs_EMG, LTOs_EMG);
+
+%     Params_Patient_cyclesplit.(name).R_lowfreq_pow_TA = R_lowfreq_pow_TA;
+%     Params_Patient_cyclesplit.(name).L_lowfreq_pow_TA = L_lowfreq_pow_TA;
+% %     Params_Patient_cyclesplit.(name).R_lowfreq_pow_ST = R_lowfreq_pow_ST;
+% %     Params_Patient_cyclesplit.(name).L_lowfreq_pow_ST = L_lowfreq_pow_ST;
+% %     Params_Patient_cyclesplit.(name).R_lowfreq_pow_MG = R_lowfreq_pow_MG;
+% %     Params_Patient_cyclesplit.(name).L_lowfreq_pow_MG = L_lowfreq_pow_MG;
+%     Params_Patient_cyclesplit.(name).R_lowfreq_pow_Sol = R_lowfreq_pow_Sol;
+%     Params_Patient_cyclesplit.(name).L_lowfreq_pow_Sol = L_lowfreq_pow_Sol;	
+
+    Params_Patient_cyclesplit.(name).R_medfreq_TA = R_medfreq_TA;
+    Params_Patient_cyclesplit.(name).L_medfreq_TA = L_medfreq_TA;
+%     Params_Patient_cyclesplit.(name).R_medfreq_ST = R_medfreq_ST;
+%     Params_Patient_cyclesplit.(name).L_medfreq_ST = L_medfreq_ST;
+%     Params_Patient_cyclesplit.(name).R_medfreq_MG = R_medfreq_MG;
+%     Params_Patient_cyclesplit.(name).L_medfreq_MG = L_medfreq_MG;
+    Params_Patient_cyclesplit.(name).R_medfreq_Sol = R_medfreq_Sol;
+    Params_Patient_cyclesplit.(name).L_medfreq_Sol = L_medfreq_Sol;	
+
 
 
 end
