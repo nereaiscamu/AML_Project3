@@ -51,13 +51,18 @@ mapcaplot(X_2, labels_2)
 %% Standardize the data previous to PCA
 
 
-[coefs, score] = pca(pca_data);
-[coefs_2, score_2] = pca(pca_data_2);
+[coefs, score, latent, ~, explained] = pca(pca_data);
+[coefs_2, score_2, latent_2, ~, explained_2] = pca(pca_data_2);
 % this should give a matrix where the columns are the PC and the
 % rows the weights of each feature in the PC
 % If I understood correctly we only need the 2 first PCs
 % Once we run the PCA, different options for visualization: 
 
+%[coeff,score,latent] = pca(___) also returns the principal component scores in score and the principal component variances in latent. You can use any of the input arguments in the previous syntaxes.
+
+%Principal component scores are the representations of X in the principal component space. Rows of score correspond to observations, and columns correspond to components.
+
+%The principal component variances are the eigenvalues of the covariance matrix of X.
 
 %%  1- Mapcaplot
 %mapcaplot(data) creates 2-D scatter plots of principal components of data.
@@ -110,10 +115,10 @@ legend(hPt(unqIdx))
 
 %% Now with 5 cycles as a sample with mean and variance
 
-[coefforth_2,score_2,~,~,explainedVar_2] = pca(pca_data_2);
+[coefforth_2,score_2,latent_2,~,explainedVar_2] = pca(pca_data_2);
 figure()
 % Store handle to biplot
-h_2 = biplot([coefforth_2(:,1) coefforth_2(:,2)], 'Scores',[score_2(:,1) score_2(:,2)]);%,'Varlabels',varlabels_tot
+h_2 = biplot([coefforth_2(:,1) coefforth_2(:,2)], 'Scores',[score_2(:,1) score_2(:,2)],'Varlabels',varlabels_tot);%,'Varlabels',varlabels_tot
 % Identify each handle
 hID = get(h_2, 'tag'); 
 % Isolate handles to scatter points
@@ -130,3 +135,21 @@ end
 % add legend to identify cluster
 [~, unqIdx] = unique(grp);
 legend(hPt(unqIdx))
+
+%% Feature loading
+unscaled_loading = coefs.*sqrt(latent)';
+
+new_varlabels = {};
+for i=1:length(varlabels)
+    new_varlabels{i} = strrep(varlabels{i},'_',' ');
+end
+new_varlabels = new_varlabels';
+
+figure
+barh(unscaled_loading(:,1))
+yticks(1:40)
+yticklabels(new_varlabels)
+xlim([-0.7, 1])
+
+
+

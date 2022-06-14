@@ -90,10 +90,10 @@ for idx = 1:3
     Params_Patient_cyclesplit.(name).R_max_knee_ankle = R_max_knee_ankle';
     Params_Patient_cyclesplit.(name).L_max_knee_ankle = L_max_knee_ankle';
     %Correlation of Knee and Ankle oscillation
-    [Rmean_corr_KA, Lmean_corr_KA, R_corr_Ka, L_corr_KA] = get_correlation_KA(RTOs, LTOs, RKNE, LKNE, RANK, LANK);
+    [Rmean_corr_KA, Lmean_corr_KA, R_corr_KA, L_corr_KA] = get_correlation_KA(RTOs, LTOs, RKNE, LKNE, RANK, LANK);
     Params_Patient.(name).Rmean_corr_KA = Rmean_corr_KA;
     Params_Patient.(name).Lmean_corr_KA = Lmean_corr_KA;
-    Params_Patient_cyclesplit.(name).R_corr_Ka = R_corr_Ka;
+    Params_Patient_cyclesplit.(name).R_corr_Ka = R_corr_KA;
     Params_Patient_cyclesplit.(name).L_corr_KA = L_corr_KA;														   
 
     %Endpoint velocity
@@ -168,21 +168,26 @@ for idx = 1:3
 
 
     % Mean RMS signal for each muscle selected
-    Params_Patient.(name).Rmean_RMS_TA = rms(R_env_TA);
-    Params_Patient.(name).Lmean_RMS_TA = rms(L_env_TA);
-    Params_Patient.(name).Rmean_RMS_ST = rms(R_env_ST);
-    Params_Patient.(name).Lmean_RMS_ST = rms(L_env_ST);
-    Params_Patient.(name).Rmean_RMS_MG = rms(R_env_MG);
-    Params_Patient.(name).Lmean_RMS_MG = rms(L_env_MG);
-    Params_Patient.(name).Rmean_RMS_Sol = rms(R_env_Sol);
-    Params_Patient.(name).Lmean_RMS_Sol = rms(L_env_Sol);
+    Params_Patient.(name).Rmean_RMS_TA = rms(data_EMG.RTA);
+    Params_Patient.(name).Lmean_RMS_TA = rms(data_EMG.LTA);
+    Params_Patient.(name).Rmean_RMS_ST = rms(data_EMG.RST);
+    Params_Patient.(name).Lmean_RMS_ST = rms(data_EMG.LST);
+    Params_Patient.(name).Rmean_RMS_MG = rms(data_EMG.RMG);
+    Params_Patient.(name).Lmean_RMS_MG = rms(data_EMG.LMG);
+    Params_Patient.(name).Rmean_RMS_Sol = rms(data_EMG.RSol);
+    Params_Patient.(name).Lmean_RMS_Sol = rms(data_EMG.LSol);
 
     % Mean RMS signal for each gait cycle and muscle selected
 
-    [R_split_RMS_TA, L_split_RMS_TA] = RMS_EMG(R_env_TA, L_env_TA, RTOs_EMG, LTOs_EMG);
-    [R_split_RMS_ST, L_split_RMS_ST] = RMS_EMG(R_env_ST, L_env_ST, RTOs_EMG, LTOs_EMG);
-    [R_split_RMS_MG, L_split_RMS_MG] = RMS_EMG(R_env_MG, L_env_MG, RTOs_EMG, LTOs_EMG);
-    [R_split_RMS_Sol, L_split_RMS_Sol] = RMS_EMG(R_env_Sol, L_env_Sol, RTOs_EMG, LTOs_EMG);
+    [R_Mean_TA, L_Mean_TA] = Mean_EMG(R_env_TA, L_env_TA, RTOs_EMG, LTOs_EMG);
+    [R_Mean_ST, L_Mean_ST] = Mean_EMG(R_env_ST, L_env_ST, RTOs_EMG, LTOs_EMG);
+    [R_Mean_MG, L_Mean_MG] = Mean_EMG(R_env_MG, L_env_MG, RTOs_EMG, LTOs_EMG);
+    [R_Mean_Sol, L_Mean_Sol] = Mean_EMG(R_env_Sol, L_env_Sol, RTOs_EMG, LTOs_EMG);
+
+    [R_split_RMS_TA, L_split_RMS_TA] = RMS_EMG(data_EMG.RTA, data_EMG.LTA, RTOs_EMG, LTOs_EMG);
+    [R_split_RMS_ST, L_split_RMS_ST] = RMS_EMG(data_EMG.RST, data_EMG.LST, RTOs_EMG, LTOs_EMG);
+    [R_split_RMS_MG, L_split_RMS_MG] = RMS_EMG(data_EMG.RMG, data_EMG.LMG, RTOs_EMG, LTOs_EMG);
+    [R_split_RMS_Sol, L_split_RMS_Sol] = RMS_EMG(data_EMG.RSol, data_EMG.LSol, RTOs_EMG, LTOs_EMG);
 
     Params_Patient_cyclesplit.(name).R_RMS_TA = R_split_RMS_TA;
     Params_Patient_cyclesplit.(name).L_RMS_TA = L_split_RMS_TA;
@@ -193,6 +198,14 @@ for idx = 1:3
     Params_Patient_cyclesplit.(name).R_RMS_Sol = R_split_RMS_Sol;
     Params_Patient_cyclesplit.(name).L_RMS_Sol = L_split_RMS_Sol;
 
+    Params_Patient_cyclesplit.(name).R_Mean_TA = R_Mean_TA;
+    Params_Patient_cyclesplit.(name).L_Mean_TA = L_Mean_TA;
+    Params_Patient_cyclesplit.(name).R_Mean_ST = R_Mean_ST;
+    Params_Patient_cyclesplit.(name).L_Mean_ST = L_Mean_ST;
+    Params_Patient_cyclesplit.(name).R_Mean_MG = R_Mean_MG;
+    Params_Patient_cyclesplit.(name).L_Mean_MG = L_Mean_MG;
+    Params_Patient_cyclesplit.(name).R_Mean_Sol = R_Mean_Sol;
+    Params_Patient_cyclesplit.(name).L_Mean_Sol = L_Mean_Sol;
     % Burst Duration
      [R_burst_dur_TA, L_burst_dur_TA] = burst_duration(R_env_TA, L_env_TA, RTOs_EMG, LTOs_EMG, SR_EMG);
      [R_burst_dur_ST, L_burst_dur_ST] = burst_duration(R_env_ST, L_env_ST, RTOs_EMG, LTOs_EMG, SR_EMG);
