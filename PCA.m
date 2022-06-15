@@ -21,10 +21,10 @@ dataset_list2 = ["DM002_TDM_08_1kmh.mat";
 [M2, V2, labels2_2] = resampling5(dataset_list2, Params_Patient_cyclesplit);
 
 %%
-labels1 = repelem(1,length(labels1))';
-labels2 = labels2+1;
-labels1_2 = repelem(1,length(labels1_2))';
-labels2_2 = labels2_2+1;
+%labels1 = repelem(1,length(labels1))';
+labels2 = labels2+6;
+%labels1_2 = repelem(1,length(labels1_2))';
+labels2_2 = labels2_2+6;
 %%
 X = [X1;X2];
 labels = [labels1;labels2];
@@ -120,7 +120,7 @@ grpID = 1:max(grp);
 % assign colors and legend display name
 clrMap = lines(length(unique(grp)));   % using 'lines' colormap
 for i = 1:max(grp)
-    set(hPt(grp==i), 'Color', clrMap(i,:), 'DisplayName', sprintf('Cluster %d', grpID(i)))
+    set(hPt(grp==i), 'Color', clrMap(i,:), 'DisplayName', sprintf('Dataset %d', grpID(i)))
 end
 % add legend to identify cluster
 [~, unqIdx] = unique(grp);
