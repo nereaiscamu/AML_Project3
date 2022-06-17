@@ -142,7 +142,7 @@ end
 
 close all;
 
-[onset, offset, thrs, d] = detect_bursts(EMG.LRF, 1000);
+[onset, offset, thrs, d] = detect_bursts(EMG.LSol, 1000);
 figure
 plot(d, 'color', 'k')
 hold on
@@ -151,7 +151,13 @@ hold on
 scatter(onset, d(onset), 'marker', '*')
 hold on
 scatter(offset, d(offset), 'color', 'yellow')
+xlim([30000,50000])
+xlabel('Time (ms)')
+ylabel('Preprocessed EMG signal')
+title('Onset and offset detection for the left Soleus muscle EMG of a healthy patient')
+legend('Preprocessed signal', 'Activation threshold', 'Onset', 'Offset')
 
+%%
 
 bursts_dur_list = [];
 

@@ -21,9 +21,7 @@ dataset_list2 = ["DM002_TDM_08_1kmh.mat";
 [M2, V2, labels2_2] = resampling5(dataset_list2, Params_Patient_cyclesplit);
 
 %%
-%labels1 = repelem(1,length(labels1))';
 labels2 = labels2+6;
-%labels1_2 = repelem(1,length(labels1_2))';
 labels2_2 = labels2_2+6;
 %%
 X = [X1;X2];
@@ -55,29 +53,8 @@ mapcaplot(X_2, labels_2)
 [coefs_2, score_2, latent_2, ~, explained_2] = pca(pca_data_2);
 % this should give a matrix where the columns are the PC and the
 % rows the weights of each feature in the PC
-% If I understood correctly we only need the 2 first PCs
-% Once we run the PCA, different options for visualization: 
 
-%[coeff,score,latent] = pca(___) also returns the principal component scores in score and the principal component variances in latent. You can use any of the input arguments in the previous syntaxes.
-
-%Principal component scores are the representations of X in the principal component space. Rows of score correspond to observations, and columns correspond to components.
-
-%The principal component variances are the eigenvalues of the covariance matrix of X.
-
-%%  1- Mapcaplot
-%mapcaplot(data) creates 2-D scatter plots of principal components of data.
-% Once you plot the principal components, you can:
-% Select principal components for the x and y axes from the 
-% drop-down list below each scatter plot.
-% Click a data point to display its label.
-% Select a subset of data points by dragging a box around them. 
-% Points in the selected region and the corresponding points in 
-% the other axes are then highlighted. The labels of the selected 
-% data points appear in the list box.
-% Select a label in the list box to highlight the corresponding data 
-% point in the plot. Press and hold Ctrl or Shift to 
-% select multiple data points.
-% Export the gene labels and indices to the MATLAB® workspace.
+%% Creating feature labels for data visualization
 varlabels = fieldnames(Params_Healthy_cyclesplit.AML_01_1);
 varlabels2 = strcat(fieldnames(Params_Healthy_cyclesplit.AML_01_1), '_var');
 varlabels_tot =  [varlabels;varlabels2];
@@ -93,15 +70,6 @@ for i=1:length(varlabels_tot)
     new_varlabels_tot{i} = strrep(varlabels_tot{i},'_',' ');
 end
 new_varlabels_tot = new_varlabels_tot';
-
-
-%%
-
-h1 = biplot(coefs(:,1:2),'Scores',score(:,1:2),...
-    'Color','b','Marker','o','VarLabels',varlabels);
-
-
-
 
 
 %% 2- Another option for visualization: biplots
@@ -151,7 +119,7 @@ end
 legend(hPt(unqIdx))
 
 %% Feature loading
-unscaled_loading = coefs.*sqrt(latent)';
+unscaled_loading = coefs.*sqrt(latent)';  % Computing feature loading
 figure
 barh(unscaled_loading(:,1))
 yticks(1:29)
@@ -159,7 +127,7 @@ yticklabels(new_varlabels)
 xlim([-0.9, 1])
 
 
-%% Feature loading 2
+%% Feature loading 2 (for the 5 cycles per sample)
 unscaled_loading_2 = coefs_2.*sqrt(latent_2)';
 
 figure
@@ -168,4 +136,25 @@ yticks(1:58)
 yticklabels(new_varlabels_tot)
 xlim([-0.7, 1])
 
+%% Plots of the 2 most important features
+figure
+boxplot(X(:,4),labels) % corresponding to step height
+title('Boxplot of the left step heigth for the different datasets')
+xlabel('Dataset number')
+ylabel('Step height (mm)')
+%%
+figure
+boxplot(X(:,21),labels) % corresponding to RMS
+title('Boxplot of the EMG RMS for TA and Sol muscles')
+xlabel('Dataset number')
+ylabel('RMS')
+
+
+%%
+figure
+boxplot(X(:,15),labels, 'symbol', '') % corresponding to interlimb coordination
+title('Boxplot of the left interlimb coordination')
+xlabel('Dataset number')
+ylabel('Interlimb coordination (s)')
+ylim([0.7,2.7])
 
