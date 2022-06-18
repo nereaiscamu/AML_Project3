@@ -16,38 +16,35 @@ dataset_list2 = ["DM002_TDM_08_1kmh.mat";
 [X2, labels2] = create_data_matrix(dataset_list2, Params_Patient_cyclesplit);
 
 
-%%
+%% Transforming input data
+% Computing mean and variance for each feature and using those
+% values over 5 gait cycles as a sample
 [M1, V1, labels1_2] = resampling5(dataset_list1,Params_Healthy_cyclesplit);
 [M2, V2, labels2_2] = resampling5(dataset_list2, Params_Patient_cyclesplit);
 
-%%
+%% Changing the labels to correspond to the different datasets before concatenating
 labels2 = labels2+6;
 labels2_2 = labels2_2+6;
-%%
+%% Creating input matrices for PCA
 X = [X1;X2];
 labels = [labels1;labels2];
 pca_data = zscore(X);
-mapcaplot(X,labels)
 
 V = [V1;V2];
 labels_2 = [labels1_2;labels2_2];
 pca_data_M = zscore(V);
-mapcaplot(V,labels_2)
 
 M = [M1;M2];
 labels_2 = [labels1_2;labels2_2];
 pca_data_V = zscore(M);
-mapcaplot(M,labels_2)
 
 X_2 = [M V];
 labels_2 = [labels1_2;labels2_2];
 pca_data_2 = zscore(X_2);
-mapcaplot(X_2, labels_2)
 
 
 
 %% Standardize the data previous to PCA
-
 
 [coefs, score, latent, ~, explained] = pca(pca_data);
 [coefs_2, score_2, latent_2, ~, explained_2] = pca(pca_data_2);
@@ -72,7 +69,7 @@ end
 new_varlabels_tot = new_varlabels_tot';
 
 
-%% 2- Another option for visualization: biplots
+%% Using biplots for data projection into 2 first PCs
 [coefforth,score,~,~,explainedVar] = pca(pca_data);
 figure()
 % Store handle to biplot
@@ -82,7 +79,7 @@ hID = get(h, 'tag');
 % Isolate handles to scatter points
 hPt = h(strcmp(hID,'obsmarker')); 
 % Identify cluster groups
-grp = findgroups(labels);    %r2015b or later - leave comment if you need an alternative
+grp = findgroups(labels);    
 grp(isnan(grp)) = max(grp(~isnan(grp)))+1; 
 grpID = 1:max(grp); 
 % assign colors and legend display name
@@ -106,7 +103,7 @@ hID = get(h_2, 'tag');
 % Isolate handles to scatter points
 hPt = h_2(strcmp(hID,'obsmarker')); 
 % Identify cluster groups
-grp = findgroups(labels_2);    %r2015b or later - leave comment if you need an alternative
+grp = findgroups(labels_2);    
 grp(isnan(grp)) = max(grp(~isnan(grp)))+1; 
 grpID = 1:max(grp); 
 % assign colors and legend display name

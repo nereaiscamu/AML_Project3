@@ -169,26 +169,6 @@ for i=1:1:num_muscles
 
 end
 
-%% Coactivation
-% 1- we need to know which are the antagonist muscles
-% 2- we need to compute understand the amount of time they are coactivated
-% Should be per gait cycle, but for now we can compute it in general per
-% whole length
-
-% iliopsoas = hip flexor
-% gluteus maximus = hip extensor
-
-% Bicepts femoris antagonist of quadriceps
-% Rectus femoris (one of the quadriceps group) --> antagonist hamstring
-% Vastus lateralis --> antagonist biceps femoris
-% Tibialis anterioris --> plantar flexion --> antagonist 
-% Semitendinosus --> flexion of the knee --> antagonist quadriceps
-% Medial gastrocnemius --> plantar flexes foot, flexes knee --> antagonist
-% TA
-% SOleus ---> plantarflexion --> antagonist TA
-
-
-
 function [xfft, Pxx] = spectrum1(x, SR)
     fnyq = SR/2;
     N=length(x); 

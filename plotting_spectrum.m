@@ -1,45 +1,39 @@
-R_lowfreq_pow = [];
-L_lowfreq_pow = [];
-R_medfreq = [];
-L_medfreq = [];
+healthy = load("AML_01_1.mat");
+no_EES = load("DM002_TDM_1kmh_NoEES.mat");
+EES = load("DM002_TDM_08_1kmh.mat");
 
-RANK = Markers.RANK - mean(Markers.RANK);
-LANK = Markers.LANK - mean(Markers.LANK);
-RHIP = Markers.RHIP - mean(Markers.RHIP);
-LHIP = Markers.LHIP - mean(Markers.LHIP);
-RKNE = Markers.RKNE - mean(Markers.RKNE);
-LKNE = Markers.LKNE - mean(Markers.LKNE);
-
-%Gait cycle events detection (TO and IC)
-[RTOs, LTOs, RICs, LICs] = gait_cycle_events(RANK, LANK, RKNE, LKNE, RHIP, LHIP);
-
-
-for i = 1:length(RTOs)-1
-    data_i = EMG.LTA(RTOs(i):RTOs(i+1));
-    R_pxx = pwelch(data_i, 100, 50);
-    stop = int16(0.1*length(R_pxx));
-    pow_i = sum(R_pxx(1:stop));
-    R_lowfreq_pow = [R_lowfreq_pow; pow_i];
-    a = find(R_pxx==median(R_pxx(:)));
-    R_medfreq = [R_medfreq;a]
-end
-
-
+EMG_healthy = healthy.EMG;
+EMG_no_EES = no_EES.data;
+EMG_EES = EES.data;
 
 %%
-
-
- R_pxx = pwelch(EMG.LTA, 100, 50);
+ R_pxx_healthy = pwelch(EMG_healthy.LTA, 100, 50);
  a = find(R_pxx==median(R_pxx(:)));
 
- R_pxx2 = pwelch(data.LTA, 100, 50);
+ R_pxx_noEES = pwelch(EMG_no_EES.LTA, 100, 50);
  b = find(R_pxx2==median(R_pxx2(:)));
 
- plot(R_pxx)
+ R_pxx_EES = pwelch(EMG_EES.LTA, 100, 50);
+ c = find(R_pxx2==median(R_pxx2(:)));
+
+
+ plot(10*log10(R_pxx_healthy))
  hold on
- plot(a, median(R_pxx), '*')
+ plot(10*log10(R_pxx_noEES), 'red')
  hold on
- plot(R_pxx2, 'red')
+ plot(10*log10(R_pxx_EES), 'k')
  hold on
- plot(b, median(R_pxx2), 'o')
+ plot(a, median(10*log10(R_pxx_healthy)), '*')
+ hold on
+ plot(b, median(10*log10(R_pxx_noEES)), 'o')
+ hold on
+ plot(b, median(10*log10(R_pxx_EES)), 'o')
+ legend('Power spectrum healthy', ...
+     'Power spectrum SCI patient no stimulation', ...
+     'Power spectrum SCI patient EES', ...
+     'Median power frequency healthy', ...
+     'Median power frequency SCI patient noEES', ...
+     'Median power frequency SCI patient EES')
+ xlabel('Frequency (Hz)')
+ ylabel('Power (dB/(rad/sample)')
 
