@@ -83,14 +83,45 @@ grp = findgroups(labels);
 grp(isnan(grp)) = max(grp(~isnan(grp)))+1; 
 grpID = 1:max(grp); 
 % assign colors and legend display name
-clrMap = lines(length(unique(grp)));   % using 'lines' colormap
+clrMap = [255 0 0; 255 166 0; 255 243 0;100 255 0; 94 176 40; 157 201 243 ;0 85 255; 221 129 255; 250 20 250]/255;
 for i = 1:max(grp)
     set(hPt(grp==i), 'Color', clrMap(i,:), 'DisplayName', sprintf('Dataset %d', grpID(i)))
 end
 % add legend to identify cluster
 [~, unqIdx] = unique(grp);
 legend(hPt(unqIdx))
-    
+  
+%% Distance calculation
+c1 = score(:,1);
+c2 = score(:,2);
+groupmeans = [];
+names = [];
+cgray = gray;
+
+figure
+hold on
+
+for i = 1:9
+    idx = find(grp == i);
+    meanc1 = mean(c1(idx(1):idx(end)));
+    meanc2 = mean(c2(idx(1):idx(end)));
+    groupmeans = [groupmeans; meanc1 meanc2];
+    names = [names "data "+i "mean "+i]
+    plot(c1(idx(1):idx(end)), c2(idx(1):idx(end)), '.', "color",  cgray(i*25,:))
+    plot(meanc1,meanc2, 'x', "color", clrMap(i, :), 'markersize', 8, 'LineWidth', 4)
+end
+legend(names)
+title("Group means")
+xlabel("component 1")
+ylabel("component 2")
+
+distances = zeros(9);
+for i = 1:9
+    for j = 1:9
+        distances(i,j) = round(norm(groupmeans(i,:) - groupmeans(j,:)), 2);
+    end
+end
+
 
 %% Now with 5 cycles as a sample with mean and variance
 
@@ -107,7 +138,7 @@ grp = findgroups(labels_2);
 grp(isnan(grp)) = max(grp(~isnan(grp)))+1; 
 grpID = 1:max(grp); 
 % assign colors and legend display name
-clrMap = lines(length(unique(grp)));   % using 'lines' colormap
+clrMap = [255 0 0; 255 166 0; 255 243 0;100 255 0; 94 176 40; 157 201 243 ;0 85 255; 221 129 255; 250 20 250]/255;
 for i = 1:max(grp)
     set(hPt(grp==i), 'Color', clrMap(i,:), 'DisplayName', sprintf('Cluster %d', grpID(i)))
 end
