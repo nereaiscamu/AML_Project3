@@ -26,6 +26,7 @@ dataset_list2 = ["DM002_TDM_08_1kmh.mat";
 labels2 = labels2+6;
 labels2_2 = labels2_2+6;
 %% Creating input matrices for PCA
+%Standardize the data previous to PCA
 X = [X1;X2];
 labels = [labels1;labels2];
 pca_data = zscore(X);
@@ -41,15 +42,6 @@ pca_data_V = zscore(M);
 X_2 = [M V];
 labels_2 = [labels1_2;labels2_2];
 pca_data_2 = zscore(X_2);
-
-
-
-%% Standardize the data previous to PCA
-
-[coefs, score, latent, ~, explained] = pca(pca_data);
-[coefs_2, score_2, latent_2, ~, explained_2] = pca(pca_data_2);
-% this should give a matrix where the columns are the PC and the
-% rows the weights of each feature in the PC
 
 %% Creating feature labels for data visualization
 varlabels = fieldnames(Params_Healthy_cyclesplit.AML_01_1);
@@ -70,10 +62,39 @@ new_varlabels_tot = new_varlabels_tot';
 
 
 %% Using biplots for data projection into 2 first PCs
-[coefforth,score,~,~,explainedVar] = pca(pca_data);
+[coefforth,score,latent,~,explainedVar] = pca(pca_data);
+% this should give a matrix where the columns are the PC and the
+% rows the weights of each feature in the PC
 figure()
 % Store handle to biplot
 h = biplot([coefforth(:,1) coefforth(:,2)],'Scores',[score(:,1) score(:,2)],'Varlabels',varlabels);
+% Identify each handle
+hID = get(h, 'tag'); 
+% Isolate handles to scatter points
+hPt = h(strcmp(hID,'obsmarker')); 
+% Identify cluster groups
+grp = findgroups(labels);    
+grp(isnan(grp)) = max(grp(~isnan(grp)))+1; 
+grpID = 1:max(grp); 
+% assign colors and legend display name
+clrMap = [255 0 0; 255 166 0; 255 243 0;100 255 0; 94 176 40; 157 201 243 ;0 85 255; 221 129 255; 250 20 250]/255;
+for i = 1:max(grp)
+    set(hPt(grp==i), 'Color', clrMap(i,:), 'DisplayName', sprintf('Dataset %d', grpID(i)))
+end
+% add legend to identify cluster
+[~, unqIdx] = unique(grp);
+legend(hPt(unqIdx))
+
+%% Using biplots for data projection into 2 first PCs
+[coefforth,score,latent,~,explainedVar] = pca(pca_data);
+% this should give a matrix where the columns are the PC and the
+% rows the weights of each feature in the PC
+figure()
+% Store handle to biplot
+
+h = biplot([coefforth(:,2) coefforth(:,3)],'Scores',[score(:,2) score(:,3)],'Varlabels',varlabels);
+
+
 % Identify each handle
 hID = get(h, 'tag'); 
 % Isolate handles to scatter points
@@ -106,7 +127,7 @@ for i = 1:9
     meanc1 = mean(c1(idx(1):idx(end)));
     meanc2 = mean(c2(idx(1):idx(end)));
     groupmeans = [groupmeans; meanc1 meanc2];
-    names = [names "data "+i "mean "+i]
+    names = [names "data "+i "mean "+i];
     plot(c1(idx(1):idx(end)), c2(idx(1):idx(end)), '.', "color",  cgray(i*25,:))
     plot(meanc1,meanc2, 'x', "color", clrMap(i, :), 'markersize', 8, 'LineWidth', 4)
 end
@@ -147,7 +168,7 @@ end
 legend(hPt(unqIdx))
 
 %% Feature loading
-unscaled_loading = coefs.*sqrt(latent)';  % Computing feature loading
+unscaled_loading = coefforth.*sqrt(latent)';  % Computing feature loading
 figure
 barh(unscaled_loading(:,1))
 yticks(1:29)
@@ -156,7 +177,7 @@ xlim([-0.9, 1])
 
 
 %% Feature loading 2 (for the 5 cycles per sample)
-unscaled_loading_2 = coefs_2.*sqrt(latent_2)';
+unscaled_loading_2 = coefforth_2.*sqrt(latent_2)';
 
 figure
 barh(unscaled_loading_2(:,1))
@@ -185,4 +206,18 @@ title('Boxplot of the left interlimb coordination')
 xlabel('Dataset number')
 ylabel('Interlimb coordination (s)')
 ylim([0.7,2.7])
+
+%%
+figure
+bar(explainedVar)
+xlabel('Principal components')
+ylabel('Explained Variance')
+ylim([0,100])
+hold on
+plot(1:numel(explainedVar), cumsum(explainedVar), 'o-', 'MarkerFaceColor', 'r')
+yyaxis right
+h = gca;
+h.YAxis(2).Limits = [0 100];
+h.YAxis(2).Color = h.YAxis(1).Color;
+h.YAxis(2).TickLabel = strcat(h.YAxis(2).TickLabel, '%');
 
