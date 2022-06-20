@@ -9,6 +9,8 @@ To obtain the results presented in the final report (check "Report" folder), the
 - Run Feature_Extraction_Patient_Final.m
 - Run PCA.m
 
+(Note: Make sure the "functions" folder is included in the path before running the scripts).
+
 By doing so, all used features will be computed and the results per gait cycled of all measures saved in output structures ("Healthy_data.mat" and "Patient_data.mat"). Those are the inputs of the PCA script. The latest shapes and standardizes the data, then performs PCA analysis and plots the results. 
 
 Additional scripts can be found in the main folder too, namely "EMG_feats.m", "plotting_spectrum.m", as well as the version of the feature extraction using all computed features. Those are used for the report but not needed for the main workflow of this project. 
